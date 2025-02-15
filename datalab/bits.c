@@ -357,8 +357,23 @@ unsigned floatScale2(unsigned uf) {
  *   Max ops: 30
  *   Rating: 4
  */
+// This task rounds towards 0, which simplifies the task.
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  unsigned sgn = uf >> 31;
+  int fac = sgn ? -1:1;
+  unsigned e = (uf >> 23) & 0xff; // The exponent bits
+  int exp = e;
+  unsigned frac = uf & 0x7fffff;
+  unsigned x = 0x80000000u + (frac << 8);
+  unsigned sft = 31 - exp;
+  if (e == 0xff) return 0x80000000u;
+  if (!e) {  // Float number is very small, can safely return 0
+    return 0;
+  }
+  exp = exp - 0x7f; // Get real exp
+  if (exp <= -1) return 0;
+  else if (exp >= 31) return 0x80000000u; // Out of range or is indeed tmin
+  return fac * (x >> sft);
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
