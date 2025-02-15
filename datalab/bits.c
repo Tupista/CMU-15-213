@@ -365,12 +365,13 @@ int floatFloat2Int(unsigned uf) {
   int exp = e;
   unsigned frac = uf & 0x7fffff;
   unsigned x = 0x80000000u + (frac << 8);
-  unsigned sft = 31 - exp;
+  unsigned sft = 0;
   if (e == 0xff) return 0x80000000u;
   if (!e) {  // Float number is very small, can safely return 0
     return 0;
   }
   exp = exp - 0x7f; // Get real exp
+  sft = 31 - exp;
   if (exp <= -1) return 0;
   else if (exp >= 31) return 0x80000000u; // Out of range or is indeed tmin
   return fac * (x >> sft);
@@ -389,5 +390,8 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+  if (x < -148) return 0u;
+  else if (x < -126) return 0x1u << (x + 148);
+  else if (x <= 127) return (x + 0x7Fu) << 23;
+  else return 0x7F800000u;
 }
