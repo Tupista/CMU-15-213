@@ -335,7 +335,15 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  unsigned e = (uf >> 23) & 0xff;
+  if (e == 0xff) return uf; // NaN or inf
+  if (!e) { // Denormalized numbers
+    unsigned x = uf & 0x7fffffff;
+    return uf ^ x ^ (x << 1);
+  }
+  uf = uf + 0x800000; // Add 1 to Exp bits, deal with inf
+  if(((uf >> 23) & 0xff) == 0xff) uf = uf & 0xff800000;
+  return uf;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
