@@ -1,0 +1,13 @@
+https://www.cs.cmu.edu/afs/cs/academic/class/15213-s23/www/
+This website contains much useful info.
+
+Phase 1: 
+Notice string_length gets the strlen of ($rdi). 
+Print the string in <strings_not_equal>.
+
+Phase 2:
+First number is stored at ($rsp) ==> Should be 1.
+Check $eax and ($rbx) each time at *0x400f1c, guess $eax times 2 each time!
+The answer is therefore 1 2 4 8 16 32.
+
+Phase 3:
